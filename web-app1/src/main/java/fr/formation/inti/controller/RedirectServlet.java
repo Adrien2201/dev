@@ -1,7 +1,11 @@
 package fr.formation.inti.controller;
 
 import java.io.IOException;
+import java.util.Enumeration;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,22 +29,44 @@ public class RedirectServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// Set response content type
-	    response.setContentType("text/html");
+		ServletOutputStream out = response.getOutputStream();
+		out.println("<html>");
+		out.println("<head><title> infos Servlet </title></head>");
+		String resquestUrl = request.getRequestURL().toString();
+		out.println("<br><span> requestURL :" + resquestUrl);
+		out.println("</span>");
 
-	    // New location to be redirected
-	    String site = new String("http://localhost:8080/web-app1/infos");
+		String resquestUri = request.getRequestURI();
+		out.println("<br><span> requestURI :" + resquestUri);
+		out.println("</span>");
 
-	    response.setStatus(response.SC_MOVED_TEMPORARILY);
-	    response.setHeader("Location", site);    
+		String contextPath = request.getContextPath();
+		out.println("<br><span> contextPath :" + contextPath);
+		out.println("</span>");
+		out.println("<br><br><b><>Headers: </b>");
+		Enumeration<String> headers = request.getHeaderNames();
+		while(headers.hasMoreElements()) {
+			String header = headers.nextElement();
+			out.println("<br> "+header+" : "+request.getHeader(header));
+		}
+		//l'emplacement de l'appliacation web dans le disque dur
+		out.println("<br><br><b>Real path :</b> ");
+		ServletContext servletContext = request.getServletContext();
+		String realPath = servletContext.getRealPath("");
+		out.print(realPath);
+  
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		ServletOutputStream out = response.getOutputStream();
+		out.println("<html>");
+		out.println("<head><title> infos Servlet </title></head>");
+		String login = request.getParameter("login");
+		String pass = request.getParameter("password");
+		out.println("<h1> Method Post " + login + " - " + pass + "</h1>");
 	}
 
 }
